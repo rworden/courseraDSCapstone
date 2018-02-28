@@ -4,7 +4,7 @@ library(tidyr)
 library(dplyr)
 library(tidytext)
 library(gsubfn)
-a<-outputChoice("hello there")
+a<-outputChoice("you doing today")
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
