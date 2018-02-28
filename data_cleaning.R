@@ -11,6 +11,9 @@ library(gsubfn)
 # news<-readLines("en_US.news.txt")
 # all<-c(twitter,blog,news)
 
+# testtxt<-file("file:///Users/rworden/Desktop/ds_hold/courseraDSCapstone/test.txt",open="r+")
+# writeLines(all_sample,testtxt)
+# close(testtxt)
 all_sample <- readLines("test.txt")
 
 # #########
