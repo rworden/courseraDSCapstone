@@ -1,19 +1,31 @@
 library(shiny)
+library(shinythemes)
 # Define UI for application that draws a histogram
-bootstrapPage(fluidPage(
-  
-  # Application title
-  titlePanel("Word Predictions"),
-  
-  # Sidebar with a slider input for number of bins 
-  sidebarLayout(
-    sidebarPanel(
-        textInput("userInput","input",placeholder="put text here")
-    ),
+shinyUI(fluidPage(
+    theme = shinytheme("superhero"),
+    titlePanel("Word Predictions"),
     
-    # Show a plot of the generated distribution
+    sidebarLayout(
+    sidebarPanel(
+        textInput("userInput",label=NULL,placeholder="Put text here"),
+        p(),
+        h3("Background"),
+        p("The data analyzed here come from three sources, are sampled, and stats...")
+        ),
+    
     mainPanel(
-       textOutput("words")
+        tags$style(type="text/css",
+                   ".shiny-output-error { visibility: hidden; }",
+                   ".shiny-output-error:before { visibility: hidden; }"),
+        h3("Single Word Prediction:"),
+        fluidRow(
+            column(width=6, textOutput("word"))
+        ),
+        h3("Multiple Word Choices:"),
+        fluidRow(
+            column(width=6, tableOutput("words"))
+            )
+        )
     )
-  )
-))
+    )
+)

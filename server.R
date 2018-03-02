@@ -4,22 +4,19 @@ library(tidyr)
 library(dplyr)
 library(tidytext)
 library(gsubfn)
-# a<-outputChoice("you doing today")
 
-# Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-    a <- reactive({ outputChoice(input$userInput) })
-    output$words <- renderText({a()})
-
-  # output$distPlot <- renderPlot({
-  #   
-  #   # generate bins based on input$bins from ui.R
-  #   x    <- faithful[, 2] 
-  #   bins <- seq(min(x), max(x), length.out = input$bins + 1)
-  #   
-  #   # draw the histogram with the specified number of bins
-  #   hist(x, breaks = bins, col = 'darkgray', border = 'white')
-  #   
-  # })
+    chk <- reactive({
+        if (input$userInput == "")
+            return(NULL)
+    })
+    
+    if (!is.null(chk)) {
+    a <- reactive({ findLast(input$userInput) })
+    output$word <- renderText({a()})
+    
+    b <- reactive({ findLastWords(input$userInput) })
+    output$words <- renderTable({b()})
+    }
   
 })

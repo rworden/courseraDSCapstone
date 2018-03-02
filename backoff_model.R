@@ -7,12 +7,10 @@ library(gsubfn)
 
 findStart <- function (phrase) { ## count the number of words in a phrase
     phrase <- trimws(phrase,which = c("both")) # trim whitespace
-    if (nchar(phrase) == 0) {
-        print("please enter something")
-    }
-    else {
+    if (nchar(phrase) > 0) {
         n <- length(str_extract_all(phrase,"[a-z]+")[[1]])
     }
+    
     if (n > 3) { # restrict our max word count to three for backoffModel
         n <- 3
     }
@@ -29,7 +27,6 @@ bigSentence <- function(phrase, n) { ## for large sentences, only consider last 
         secondlast_word <- strsplit(phrase," ")[[1]][secondlast_word_pos]
         thirdlast_word <- strsplit(phrase," ")[[1]][thirdlast_word_pos]
         phrase <- paste(thirdlast_word,secondlast_word,last_word)
-        print(phrase)
     } else {
         phrase <- phrase
     }
@@ -50,7 +47,6 @@ findNext <- function(phrase) {
     assign("matchset", match,pos = 1)
     # TODO bug on outputChoice("i am not a") == "am not aware of" but returns "i am not a of"
     a<-as.data.frame(subset(eval(parse(text=start_lookup)),grepl(paste("^",phrase,sep=""),eval(parse(text=matchset))),perl = TRUE))
-    print(nrow(a))
     while (nrow(a) == 0 & n > 0) {
         depth <- n
         b <- backoffModel(phrase, depth)
@@ -58,8 +54,7 @@ findNext <- function(phrase) {
         n <- n - 1
         a<-as.data.frame(subset(eval(parse(text=start_lookup)),grepl(paste("^",b,sep=""),eval(parse(text=matchset))),perl = TRUE))
     }
-    print(nrow(a))
-    return(a)
+    return(head(a))
 }
 
 backoffModel <- function(phrase, depth) {
@@ -70,7 +65,6 @@ backoffModel <- function(phrase, depth) {
 }
 
 ## find the last word or words for our input phrase in ngram+1 table
-## input phrase should be processed with findNext() first and input as data
 findLast <- function(phrase) {
     data <- findNext(phrase)
     mx <- max(data$n)
@@ -80,8 +74,11 @@ findLast <- function(phrase) {
     return(nxt) ## if length(nxt > 1), we have a list of tied elements b[[1]]
 }
 
-outputChoice <- function(phrase) {
-    data <- findLast(phrase)
-    out <- paste(phrase,data[[1]],sep=" ")
-    return(out)
+findLastWords <- function(phrase) {
+    words <- findNext(phrase)
+    mx <- max(words$n)
+    nxt <- words[words$n <= mx,]$ngram
+    words <- strapplyc(nxt, "(\\S[a-z]*)$")
+    words <- unlist(words)
+    return(words)
 }
